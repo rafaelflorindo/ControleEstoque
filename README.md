@@ -34,14 +34,15 @@ O projeto tem como objetivo funcionar como uma API RESTful, permitindo a realiza
    git clone https://github.com/rafaelflorindo/ControleEstoque.git
 2. Acesse a pasta:
     ```bash
-    cd MeuFinaceiro
+    cd ControleEstoque
 3. Instale as dependências:
     ```bash
     npm install
 4. Inicie o projeto:
     ```bash
-    npm start
- A aplicação estará disponível em http://localhost:<porta separada pelo ReactNative, ou emulada pelo Android Stude>
+    node --watch index.js
+    
+ A aplicação estará disponível em http://localhost:5000
 
 📌 Autor
 Desenvolvido por Rafael Florindo — 2025
