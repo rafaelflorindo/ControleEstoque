@@ -6,14 +6,20 @@ const Produto = sequelize.define("Produto", {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    quantidade:{
-        type: DataTypes.INTEGER,        
-        allowNull: false
+    quantidade: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+            min: 0
+        }
     },
     preco: {
-        type: DataTypes.FLOAT,        
-        allowNull: false,    
-    },
+        type: DataTypes.FLOAT,
+        allowNull: false,
+        validate: {
+            min: 0.01
+        }
+    }
 });
 
 module.exports = Produto;
