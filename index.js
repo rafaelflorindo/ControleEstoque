@@ -158,19 +158,19 @@ app.get("/usuarios/:id", async (req, res) => {
 });
 
 app.post("/usuarios", async (req, res) => {
-
-    const {nome, email, senha} = req.body;
-    
+    const {nome, email, telefone, senha} = req.body;
     if (typeof nome !== "string" || nome.trim() === "") {
         return res.status(400).json({ error: "Nome é obrigatório e deve ser uma string." });
     }
     if (typeof email !== "string" || email.trim() === "") {
         return res.status(400).json({ error: "E-mail é obrigatório e deve ser uma string." });
     }
+    if (typeof telefone !== "string" || telefone.trim() === "") {
+        return res.status(400).json({ error: "Telefone é obrigatório e deve ser uma string." });
+    }
     if (typeof senha !== "string" || senha.trim() === "") {
         return res.status(400).json({ error: "Senha é obrigatório e deve ser uma string." });
     }
-   
     try {
         const novoUsuario = await Usuario.create(req.body);
         res.status(201).json(novoUsuario);
@@ -180,18 +180,14 @@ app.post("/usuarios", async (req, res) => {
 });
 
 app.put("/usuarios/:id", async (req, res) => {
-    const {nome, email, senha} = req.body;
+    const {nome, telefone} = req.body;
     
     if (typeof nome !== "string" || nome.trim() === "") {
         return res.status(400).json({ error: "Nome é obrigatório e deve ser uma string." });
     }
-    if (typeof email !== "string" || email.trim() === "") {
-        return res.status(400).json({ error: "E-mail é obrigatório e deve ser uma string." });
-    }
-    if (typeof senha !== "string" || senha.trim() === "") {
-        return res.status(400).json({ error: "Senha é obrigatório e deve ser uma string." });
-    }
-   
+    if (typeof telefone !== "string" || telefone.trim() === "") {
+        return res.status(400).json({ error: "Telefone é obrigatório e deve ser uma string." });
+    } 
 
     try {
         const id = Number(req.params.id);
@@ -232,6 +228,13 @@ app.delete("/usuarios/:id", async (req, res) => {
 /******************************************************* */
 app.post("/auth/login", async(req, res)=>{
     const {email, senha} = req.body;
+    if (typeof email !== "string" || email.trim() === "") {
+        return res.status(400).json({ error: "E-mail é obrigatório e deve ser uma string." });
+    }
+    if (typeof senha !== "string" || senha.trim() === "") {
+        return res.status(400).json({ error: "Senha é obrigatório e deve ser uma string." });
+    }
+    
     const usuario = await Usuario.findOne({where : {email}})
     
     if(!usuario)
