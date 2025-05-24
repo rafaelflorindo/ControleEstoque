@@ -6,18 +6,15 @@ const Produto = sequelize.define("Produto", {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    quantidade: {
+    descricao: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    quantidadeMinima:{
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-            min: 0
-        }
-    },
-    preco: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-        validate: {
-            min: 0.01
+            min: 10
         }
     }
 });

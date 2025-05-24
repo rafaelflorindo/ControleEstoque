@@ -1,7 +1,8 @@
 const express = require("express");
 const sequelize = require("./database");
 const Produto = require("./models/Produto");
-const Usuario = require("./models/Usuario")
+const Usuario = require("./models/Usuario");
+const Estoque = require("./models/Estoque");
 
 const cors = require('cors');//habilita o Node a receber conexões
 require('dotenv').config();
@@ -54,19 +55,20 @@ app.get("/produtos/:id", async (req, res) => {
 
 app.post("/produtos", async (req, res) => {
 
-    const {nome, quantidade, preco} = req.body;
-    
+    const { nome, descricao, quantidadeMinima } = req.body;
+
     if (typeof nome !== "string" || nome.trim() === "") {
         return res.status(400).json({ error: "Nome é obrigatório e deve ser uma string." });
     }
-
-    if (!Number.isInteger(quantidade) || quantidade < 0) {
-        return res.status(400).json({ error: "Quantidade deve ser um número inteiro positivo." });
+    
+    if (typeof descricao !== "string" || descricao.trim() === "") {
+        return res.status(400).json({ error: "Descrição é obrigatório e deve ser uma string." });
+    }
+    
+    if (!Number.isInteger(quantidadeMinima) || quantidadeMinima < 0) {
+        return res.status(400).json({ error: "Quantidade Minima deve ser um número inteiro positivo." });
     }
 
-    if (typeof preco !== "number" || preco < 0) {
-        return res.status(400).json({ error: "Preço deve ser um número positivo." });
-    }
     try {
         const novoProduto = await Produto.create(req.body);
         res.status(201).json(novoProduto);
@@ -76,20 +78,24 @@ app.post("/produtos", async (req, res) => {
 });
 
 app.put("/produtos/:id", async (req, res) => {
-    const { nome, quantidade, preco } = req.body;
+    const { nome, descricao, quantidadeMinima } = req.body;
 
     if (typeof nome !== "string" || nome.trim() === "") {
         return res.status(400).json({ error: "Nome é obrigatório e deve ser uma string." });
     }
-
-    if (!Number.isInteger(quantidade) || quantidade < 0) {
-        return res.status(400).json({ error: "Quantidade deve ser um número inteiro positivo." });
+    
+    if (typeof descricao !== "string" || descricao.trim() === "") {
+        return res.status(400).json({ error: "Descrição é obrigatório e deve ser uma string." });
+    }
+    
+    if (!Number.isInteger(quantidadeMinima) || quantidadeMinima < 0) {
+        return res.status(400).json({ error: "Quantidade Minima deve ser um número inteiro positivo." });
     }
 
-    if (typeof preco !== "number" || preco < 0) {
+   /* if (typeof preco !== "number" || preco < 0) {
         return res.status(400).json({ error: "Preço deve ser um número positivo." });
     }
-
+*/
     try {
         const id = Number(req.params.id);
         if (isNaN(id)) {
@@ -250,6 +256,51 @@ app.post("/auth/login", async(req, res)=>{
         return res.status(500).json({message:"Senha invalida"})
     }
 })
+/*******************************************************************/
+//ROTAS DE ESTOQUE
+/*******************************************************************/
+app.post("/estoque", async (req, res) => {
+    const { ProdutoId } = req.body;
+    try {
+        const novoEstoque = await Estoque.create(req.body,
+            {
+                ProdutoId: ProdutoId
+            }
+            );
+        res.status(201).json(novoEstoque);
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao criar estoque." });
+    }
+});
+
+app.get("/estoques", async (req, res) => {
+    try {
+        const estoques = await Estoque.findAll(
+            {
+                include: Produto
+            });
+
+            if (estoques.length === 0) {
+            return res.status(200).json(
+                { message: "Nenhum estoque encontrado.", 
+                    data: [] 
+                }
+                );
+        }
+
+        res.status(200).json(estoques);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro ao buscar estoques." });
+    }
+});
+/* 
+getOne
+put 
+del
+*/
+
+
 app.listen(port, function(){
     console.log(`Servidor Rodando em: http://localhost:${port}`);
 })
