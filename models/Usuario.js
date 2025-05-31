@@ -22,6 +22,10 @@ const Usuario = sequelize.define("Usuario", {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    permissao:{
+        type:DataTypes.STRING,
+        allowNull: false,
+    }
 });
 
 module.exports = Usuario;

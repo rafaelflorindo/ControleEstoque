@@ -23,15 +23,15 @@ sequelize.sync().then(() => {
 app.get("/", (req,res)=>{
     res.send("Rota Principal");
 });
-
+/********************************************************* */
+/*PRODUTO*/
+/********************************************************* */
 app.get("/produtos", async (req, res) => {
     try {
         const produtos = await Produto.findAll();
-
         if (produtos.length === 0) {
             return res.status(200).json({ message: "Nenhum produto encontrado.", data: [] });
         }
-
         res.status(200).json(produtos);
     } catch (error) {
         console.error(error);
@@ -70,7 +70,7 @@ app.post("/produtos", async (req, res) => {
     if (!Number.isInteger(quantidadeMinima) || quantidadeMinima < 0) {
         return res.status(400).json({ error: "Quantidade Minima deve ser um número inteiro positivo." });
     }
-
+    
     try {
         const novoProduto = await Produto.create(req.body);
         res.status(201).json(novoProduto);
@@ -166,7 +166,7 @@ app.get("/usuarios/:id", async (req, res) => {
 });
 
 app.post("/usuarios", async (req, res) => {
-    const {nome, email, telefone, senha} = req.body;
+    const {nome, email, telefone, senha, permissao} = req.body;
     if (typeof nome !== "string" || nome.trim() === "") {
         return res.status(400).json({ error: "Nome é obrigatório e deve ser uma string." });
     }
@@ -179,6 +179,11 @@ app.post("/usuarios", async (req, res) => {
     if (typeof senha !== "string" || senha.trim() === "") {
         return res.status(400).json({ error: "Senha é obrigatório e deve ser uma string." });
     }
+    
+    if (typeof permissao !== "string" || permissao.trim() === "") {
+        return res.status(400).json({ error: "Permissão é obrigatório e deve ser uma string." });
+    }
+
     try {
         const novoUsuario = await Usuario.create(req.body);
         res.status(201).json(novoUsuario);
@@ -188,7 +193,7 @@ app.post("/usuarios", async (req, res) => {
 });
 
 app.put("/usuarios/:id", async (req, res) => {
-    const {nome, telefone} = req.body;
+    const {nome, telefone, permissao} = req.body;
     
     if (typeof nome !== "string" || nome.trim() === "") {
         return res.status(400).json({ error: "Nome é obrigatório e deve ser uma string." });
@@ -196,6 +201,10 @@ app.put("/usuarios/:id", async (req, res) => {
     if (typeof telefone !== "string" || telefone.trim() === "") {
         return res.status(400).json({ error: "Telefone é obrigatório e deve ser uma string." });
     } 
+
+    if (typeof permissao !== "string" || permissao.trim() === "") {
+        return res.status(400).json({ error: "Permissão é obrigatório e deve ser uma string." });
+    }
 
     try {
         const id = Number(req.params.id);
@@ -256,8 +265,8 @@ app.post("/auth/login", async(req, res)=>{
             message:"Usuário Autenticado com Sucesso",
             data: {
                 nome: usuario.nome, 
-                email: usuario.email, 
-                telefone: usuario.telefone
+                email: usuario.email,
+                permissao: usuario.permissao
             }, 
         })
     }else{
